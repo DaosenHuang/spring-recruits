@@ -1,11 +1,22 @@
-import java.util.Scanner;
+import java.util.*;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+class NaturalSupplier implements Supplier<Integer> {
+    int n=0;
+    public Integer get() {
+        n++;
+        return n;
+    }
+}
 
 public class Test {
     public static void main(String[] args) {
-        inputMatrix();
-
+        Stream<Integer> stream = Stream.generate(new NaturalSupplier());
+        stream.limit(20).map(n -> Math.pow(n,2))
+                .forEach(System.out::println);
 
     }
+
 
     /**
      * 反转字符串顺序
@@ -44,7 +55,37 @@ public class Test {
                 System.out.print(matrix[i][j]+",");
             }
         }
+    }
 
+    /**
+     * 最长无重复字母字串
+     */
+    public static int lengthOfLongestSubstring(String s) {
+        char[] chars = s.toCharArray();
+        int[] dp = new int[s.length()];
+        // dp[i] 表示以第i个字符结尾的无重复子串
+        Map<Character, Integer> map = new HashMap<>();
+        dp[0] = 1;
+        for (int i=1; i<s.length(); i++) {
+            char ch =chars[i];
+            if (!map.containsKey(ch)) {
+                dp[i] = dp[i-1] + 1;
+            }
+            int d = i - map.get(ch);  //与上一次出现位置的距离
+
+            if (d > dp[i-1]) {
+                dp[i] = dp[i-1] + 1;
+            }
+            else {
+                dp[i] = d;
+            }
+            map.put(ch, i);
+        }
+        int max = 0;
+        for (int i=0; i<dp.length; i++) {
+          max = Math.max(max, dp[i]);
+        }
+        return max;
 
 
     }
